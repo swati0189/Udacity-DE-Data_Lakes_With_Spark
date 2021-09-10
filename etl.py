@@ -29,14 +29,10 @@ def process_song_data(spark, input_data, output_data):
     """
         
     # get filepath to song data file
-    print ('song_data file preparation Started')
     
     song_data = input_data + "song-data/*/*/*/*.json"
     
-    print ('song_data file preparation Completed')
-    
-    
-    
+
     # read song data file    
     df = spark.read.json(song_data)
     
@@ -57,9 +53,7 @@ def process_song_data(spark, input_data, output_data):
    # write songs table to parquet files partitioned by year and artist
      
     songs_table.write.parquet(output_data+'songs/'+'songs.parquet', partitionBy=['year','artist_id'])
-    
-    print('Song_Table written to parquet at location:' + output_data+'songs/'+'songs.parquet')
-
+ 
 
     # extract columns to create artists table
     artists_table = df.select(df.artist_id,\
@@ -78,7 +72,6 @@ def process_song_data(spark, input_data, output_data):
     # write artists table to parquet files
     artists_table.write.parquet(output_data + 'artists/' + 'artists.parquet', partitionBy=['artist_id'] )
     
-    print('Artists_Table written to parquet at location:' + output_data+'artists/'+'artists.parquet')
 
 def process_log_data(spark, input_data, output_data):
     
