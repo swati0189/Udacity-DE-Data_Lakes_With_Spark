@@ -46,7 +46,7 @@ def process_song_data(spark, input_data, output_data):
                             df.duration) \
                     .dropDuplicates(["song_id"])
     
-    print('Songs_Table DataFrame Created')
+    
     
 
 
@@ -63,7 +63,7 @@ def process_song_data(spark, input_data, output_data):
                              df.artist_longitude)\
                             .dropDuplicates(["artist_id"])
     
-    print('Artists_Table DataFrame Created')
+    
     
     
     
@@ -81,11 +81,10 @@ def process_log_data(spark, input_data, output_data):
         
     # get filepath to log data file
     
-    print('log_data file preparation Started')
     
     log_data = input_data + "{}log-data/*/*/*.json"
     
-    print('log_data file preparation Completed')
+    
     
     # read log data file
     df =  spark.read.json(log_data)
@@ -100,12 +99,11 @@ def process_log_data(spark, input_data, output_data):
                            df.level)\
                           .dropDuplicates(["userId"])
     
-    print('Users_Table DataFrame Created')
+    
     
     # write users table to parquet files
     users_table.write.parquet(output_data + 'users/' + 'users.parquet', partitionBy = ['userId'])
     
-    print('Users_Table written to parquet at location:' + output_data+'users/'+'users.parquet')
     
     # create datetime column from original timestamp column
     get_timestamp = udf(lambda x : datetime.fromtimestamp(x/1000.0).strftime('%Y-%m-%d %H:%M:%S'))
@@ -125,15 +123,13 @@ def process_log_data(spark, input_data, output_data):
                     f.date_format(f.col("timestamp"), "E").alias("weekday")
                 ).sort(df.timestamp).dropDuplicates()
     
-    print('Time_Table DataFrame Created')
     
     time_table.createOrReplaceTempView("time")
     
     # write time table to parquet files partitioned by year and month
    
     time_table.write.parquet(output_data + 'time/' + 'time.parquet', partitionBy=['year','month'])
-    
-    print('Time_Table written to parquet at location:' + output_data+'time/'+'time.parquet')
+   
 
     # extract columns from joined song and log datasets to create songplays table 
     songplays_table =  spark.sql("""
@@ -156,12 +152,11 @@ def process_log_data(spark, input_data, output_data):
                                  and l.length = s.duration
                                 """)
     
-    print('Songplay_Table DataFrame Created')
 
     # write songplays table to parquet files partitioned by year and month
     songplays_table.write.parquet(output_data + 'songplays/' + 'songplays.parquet',partitionBy=['year','month'])
     
-    print('Time_Table written to parquet at location:' + output_data+'songplays/'+'songplays.parquet')
+   
 
 def main():
     """
